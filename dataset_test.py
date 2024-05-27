@@ -9,7 +9,7 @@ from torchvision import transforms, utils
 
 class CrackDatasetTest(Dataset):
     def __init__(self,transform = None):
-        self.damages = os.listdir("../dmg-test/dmg-test")
+        self.damages = os.listdir("../mat-dist-test/mat-dist-test")
         self.measures = os.listdir("../dmg-test/measures")
         self.transform = transform
 
@@ -23,7 +23,7 @@ class CrackDatasetTest(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
             
-        damage = np.loadtxt("../dmg-test/dmg-test/"+self.damages[idx])
+        damage = np.loadtxt("../mat-dist-test/mat-dist-test/"+self.damages[idx])
         measures = np.loadtxt("../dmg-test/measures/"+self.measures[idx])
         sample = {'damage': damage,'measures': measures}
 

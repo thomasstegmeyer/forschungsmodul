@@ -9,7 +9,7 @@ from torchvision import transforms, utils
 
 class CrackDatasetTrain(Dataset):
     def __init__(self,transform = None):
-        self.damages = os.listdir("../dmg-train/dmg-train")
+        self.damages = os.listdir("../mat-dist-train/mat-dist-train")
         self.measures = os.listdir("../dmg-train/measures")
         self.transform = transform
 
@@ -23,7 +23,7 @@ class CrackDatasetTrain(Dataset):
             
         #damage = torch.tensor(np.float32(np.loadtxt("../dmg-train/dmg-train/"+self.damages[idx])))
         #measures = torch.tensor(np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx])))
-        damage = np.float32(np.loadtxt("../dmg-train/dmg-train/"+self.damages[idx]))
+        damage = np.float32(np.loadtxt("../mat-dist-train/mat-dist-train/"+self.damages[idx]))
         measures = np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx]))
         sample = {'damage': damage,'measures': measures}
 
