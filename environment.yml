@@ -1,0 +1,4 @@
+name: Forschungsmodul
+channels:
+  - defaults
+prefix: /home/thomas/anaconda3/envs/Forschungsmodul
