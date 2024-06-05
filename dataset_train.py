@@ -1,10 +1,11 @@
 import os
 import torch
-from skimage import io, transform
+#from skimage import io, transform
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
+#from torchvision import transforms, utils
+from torchvision.datasets import ImageFolder
 
 
 class CrackDatasetTrain(Dataset):
@@ -21,19 +22,37 @@ class CrackDatasetTrain(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
             
-        #damage = torch.tensor(np.float32(np.loadtxt("../dmg-train/dmg-train/"+self.damages[idx])))
-        #measures = torch.tensor(np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx])))
-        damage = np.float32(np.loadtxt("../mat-dist-train/mat-dist-train/"+self.damages[idx]))
-        measures = np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx]))
-        sample = {'damage': damage,'measures': measures}
+        damage = torch.tensor(np.array([np.float32(np.loadtxt("../mat-dist-train/mat-dist-train/"+self.damages[idx]))]))
+        measures = torch.tensor(np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx])))
+        #damage = np.float32(np.loadtxt("../mat-dist-train/mat-dist-train/"+self.damages[idx]))
+        #measures = np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx]))
+       # sample = {'damage': damage,'measures': measures}
+        #sample = {damage: measures}
 
-        if self.transform:
-            sample = self.transform(sample)
+        #if self.transform:
+        #    sample = self.transform(sample)
 
-        return sample
+        #return sample
+        return damage, measures
         
-data = CrackDatasetTrain()
+#data = CrackDatasetTrain()
 
-print(data[3])
+#print(data[3])
+
+#damage,label = data[3]
+#print(damage)
+#print()
+#print(label)
+#
+#
+#dataloader = DataLoader(data, batch_size=32, shuffle=True)
+#
+#for images, labels in dataloader:
+#    print("hi")
+#    print(images.shape)
+#    print("there")
+#    print(labels.shape)
+#    break
+
 
 

@@ -1,10 +1,10 @@
 import os
 import torch
-from skimage import io, transform
+#from skimage import io, transform
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
+#from torchvision import transforms, utils
 
 
 class CrackDatasetTest(Dataset):
@@ -13,8 +13,6 @@ class CrackDatasetTest(Dataset):
         self.measures = os.listdir("../dmg-test/measures")
         self.transform = transform
 
-        print(self.damages[0:3])
-        print(self.measures[0:3])
 
     def __len__(self):
         return len(self.damages)
@@ -23,17 +21,33 @@ class CrackDatasetTest(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
             
-        damage = np.loadtxt("../mat-dist-test/mat-dist-test/"+self.damages[idx])
-        measures = np.loadtxt("../dmg-test/measures/"+self.measures[idx])
-        sample = {'damage': damage,'measures': measures}
+        damage = torch.tensor(np.array([np.float32(np.loadtxt("../mat-dist-test/mat-dist-test/"+self.damages[idx]))]))
+        measures = torch.tensor(np.float32(np.loadtxt("../dmg-test/measures/"+self.measures[idx])))
 
-        if self.transform:
-            sample = self.transform(sample)
 
-        return sample
+        #if self.transform:
+        #    sample = self.transform(sample)
+
+        #return sample
+        return damage, measures
         
 data = CrackDatasetTest()
 
 print(data[3])
+damage,label = data[3]
+print(damage)
+print(label)
+
+
+dataloader = DataLoader(data, batch_size=32, shuffle=True)
+
+for images, labels in dataloader:
+    print(images)
+    print(labels)
+    break
+
+
+print(images.shape)
+
 
 
