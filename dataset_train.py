@@ -23,7 +23,7 @@ class CrackDatasetTrain(Dataset):
             idx = idx.tolist()
             
         damage = torch.tensor(np.array([np.float32(np.loadtxt("../mat-dist-train/mat-dist-train/"+self.damages[idx]))]))
-        measures = torch.tensor(np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx])))
+        measures = torch.tensor(np.float32(np.loadtxt("../dmg-train/measures_normalized/"+self.measures[idx])))
         #damage = np.float32(np.loadtxt("../mat-dist-train/mat-dist-train/"+self.damages[idx]))
         #measures = np.float32(np.loadtxt("../dmg-train/measures/"+self.measures[idx]))
        # sample = {'damage': damage,'measures': measures}
