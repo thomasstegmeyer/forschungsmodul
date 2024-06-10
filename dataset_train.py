@@ -11,7 +11,7 @@ from torchvision.datasets import ImageFolder
 class CrackDatasetTrain(Dataset):
     def __init__(self,transform = None):
         self.damages = os.listdir("../mat-dist-train/mat-dist-train")
-        self.measures = os.listdir("../dmg-train/measures")
+        self.measures = os.listdir("../dmg-train/measures_normalized")
         self.transform = transform
 
 
