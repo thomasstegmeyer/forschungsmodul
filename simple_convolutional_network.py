@@ -74,114 +74,9 @@ data = CrackDatasetTrain()
 #print(data[0]['damage'])
 
 # create your optimizer
-optimizer = optim.SGD(net.parameters(), lr=0.0005)
+optimizer = optim.SGD(net.parameters(), lr=0.00001)
 
-#loss_storage = []
-#for x in range(5):
-#    for i in range(10000):
-#        input,target = data[i]
-#        #print(input.shape)
-#        #print(target.shape)
-#        out = net(torch.tensor([input]))
-#        #print(out.shape)
-#        target = torch.tensor(target)
-#        criterion = nn.MSELoss()
-#        #break
-#
-#        #print(target)
-#        loss = criterion(out, target)
-#
-#        #print(out)
-#        #print(loss)
-#
-#        net.zero_grad()
-#        loss.backward()
-#
-#        optimizer.zero_grad()
-#        optimizer.step()
-#        #plt.scatter(i,loss.detach())
-#        loss_storage.append(loss.detach())
-#    
-#
-#print("done")
-#moving_avg = bn.move_mean(loss_storage,100)
-#plt.plot(range(len(moving_avg)),moving_avg)
-#plt.savefig("train1000.png")
-
-#dataloader = DataLoader(data, batch_size=32, shuffle=True)
-
-
-#criterion = nn.MSELoss()
-
-
-#first simple training loop
-#epochs = 200
-
-#length = len(dataloader)
-#for e in tqdm(range(21, epochs)):
-#    avg_loss = 0.
-#
-#    for i,data in tqdm(enumerate(dataloader)):
-#        inputs, labels = data
-#        optimizer.zero_grad()
-#
-#        outputs = net(inputs)
-#        
-#
-#        loss = criterion(outputs,labels)
-#
-#        loss.backward()
-#
-#        optimizer.step()
-#
-#        current_loss = loss.item()
-#        avg_loss += current_loss/length
-#    
-#    print(outputs[0])
-#    print(current_loss)
-#    print(f'Epoch {e+1} \t\t Training Loss: {avg_loss}')
-#    if e == 10:
-#        torch.save(net,"net10.pkl")
-#    if e == 20:
-#        torch.save(net,"net20.pkl")
-#    if e == 30:
-#        torch.save(net,"net30.pkl")
-#    if e == 40:
-#        torch.save(net,"net40.pkl")
-#    if e == 50:
-#        torch.save(net,"net50.pkl")
-#    if e == 60:
-#        torch.save(net,"net60.pkl")
-#    if e == 70:
-#        torch.save(net,"net70.pkl")
-#    if e == 80:
-#        torch.save(net,"net80.pkl")
-#    if e == 90:
-#        torch.save(net,"net90.pkl")
-#    if e == 100:
-#        torch.save(net,"net100.pkl")
-#    if e == 110:
-#        torch.save(net,"net110.pkl")
-#    if e == 120:
-#        torch.save(net,"net120.pkl")
-#    if e == 130:
-#        torch.save(net,"net130.pkl")
-#    if e == 140:
-#        torch.save(net,"net140.pkl")
-#    if e == 150:
-#        torch.save(net,"net150.pkl")
-#    if e == 160:
-#        torch.save(net,"net160.pkl")
-#    if e == 170:
-#        torch.save(net,"net170.pkl")
-#    if e == 180:
-#        torch.save(net,"net180.pkl")
-#    if e == 190:
-#        torch.save(net,"net190.pkl")
-#    if e == 200:
-#        torch.save(net,"net200.pkl")
-#
-#torch.save(net,"final.pkl")
+scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.95)
 
 
 #new training loop with validation
@@ -189,17 +84,18 @@ train_data, validation_data = torch.utils.data.random_split(data, [50016,9984])
 
 trainloader = DataLoader(train_data, batch_size=32, shuffle=True)
 validationloader = DataLoader(validation_data, batch_size=32, shuffle=True) # Welche Parameter machen hier Sinn?
+epochs = 200
 
-epochs = 50
-
-min_valid_loss = 175
+min_valid_loss = np.inf
 criterion = nn.MSELoss()
 length = len(trainloader)
 length_val = len(validationloader)
 
-net = torch.load("epoch8min_validation_loss.pkl")
+epochs_done = []
+traininglosses = []
+validationlosses = []
 
-for e in range(10,epochs):
+for e in range(epochs):
     train_loss = 0.0
     net.train()
 
@@ -207,11 +103,13 @@ for e in range(10,epochs):
         inputs, labels = data
         optimizer.zero_grad()
         outputs = net(inputs)
+        #print(outputs)
         loss = criterion(outputs,labels)
         loss.backward()
         optimizer.step()
         current_loss = loss.item()
         train_loss += current_loss/length
+        #tqdm.write(str(current_loss))
 
     valid_loss = 0.0
     net.eval()
@@ -224,12 +122,28 @@ for e in range(10,epochs):
 
     print(f'Epoch {e+1} \t\t Training Loss: {train_loss} \t\t Validation Loss: {valid_loss}')
 
+    epochs_done.append(e+1)
+    traininglosses.append(train_loss)
+    validationlosses.append(valid_loss)
+
+
+    np.savetxt("simple_conv_progress.txt",[epochs_done,traininglosses,validationlosses])
+
+    plt.plot(epochs_done,traininglosses)
+    plt.plot(epochs_done,validationlosses)
+    plt.legend(["training","validation"])
+    plt.xlabel("Epochs")
+    plt.ylabel("MSE loss")
+    plt.savefig("simple_conv_progress.png")
+    plt.close()
+
     if min_valid_loss > valid_loss:
         print(f'Validation Loss Decreased({min_valid_loss:.6f}--->{valid_loss:.6f}) \t Saving The Model')
         min_valid_loss = valid_loss
         # Saving State Dict
-        path = "epoch" + str(e) + "min_validation_loss.pkl"
+        path = "simple_conv_" + str(e+1) + "_min_validation_loss_lr0_000001_gamma_095.pkl"
         torch.save(net, path)
+    scheduler.step()
 
 
 #small evaluation
