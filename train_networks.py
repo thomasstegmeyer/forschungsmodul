@@ -22,7 +22,7 @@ def initialize_weights(model):
             if m.bias is not None:
                 torch.nn.init.zeros_(m.bias)
 
-def train_networks(network,name,lr, gamma, epochs = 200, batchsize = 256, optimizer = "ADAM",weight_decay = 0):
+def train_networks(network,name,lr, gamma, epochs = 200, batchsize = 20, optimizer = "ADAM",weight_decay = 0):
 
 
     try:
@@ -38,7 +38,7 @@ def train_networks(network,name,lr, gamma, epochs = 200, batchsize = 256, optimi
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(str(device) + " learning rate: " + str(lr))
 
-    initialize_weights(network)
+    #initialize_weights(network)
 
     net = network.cuda()
 
@@ -138,31 +138,31 @@ def train_networks(network,name,lr, gamma, epochs = 200, batchsize = 256, optimi
 
         scheduler.step()
 
-        if e%10 == 0:
-            net.eval()
-
-
-            
-            testloader = DataLoader(testdata, batch_size=1, shuffle=True)
-
-            relative_errors = []
-
-            for i,data in tqdm(enumerate(testloader)):
-            
-                inputs,labels = data
-                inputs = inputs.cuda()
-                labels = labels.cuda()
-
-                outputs = net(inputs)
-
-                relative_error = torch.abs(labels-outputs)/torch.abs(labels)
-
-                relative_errors.append(relative_error)
-                
-
-
-            stacked = torch.stack(relative_errors)
-
-            mean_values = np.array(torch.mean(stacked, dim = 0).cpu().detach())
-
-            print(mean_values)
+        #if e%10 == 0:
+        #    net.eval()
+#
+#
+        #    
+        #    testloader = DataLoader(testdata, batch_size=1, shuffle=True)
+#
+        #    relative_errors = []
+#
+        #    for i,data in tqdm(enumerate(testloader)):
+        #    
+        #        inputs,labels = data
+        #        inputs = inputs.cuda()
+        #        labels = labels.cuda()
+#
+        #        outputs = net(inputs)
+#
+        #        relative_error = torch.abs(labels-outputs)/torch.abs(labels)
+#
+        #        relative_errors.append(relative_error)
+        #        
+#
+#
+        #    stacked = torch.stack(relative_errors)
+#
+        #    mean_values = np.array(torch.mean(stacked, dim = 0).cpu().detach())
+#
+        #    print(mean_values)
